@@ -5,6 +5,7 @@
 #include <getopt.h>
 
 #include "cli.h"
+#include "vasHandler.h"
 
 int main(int argc, char ** argv)
 {
@@ -21,18 +22,17 @@ int main(int argc, char ** argv)
   switch(action)
   {
     case LIST:
-      //TODO
-      printf("INPUT: %s\n", inputCommand);
+      listVAS();
       break;
     case REMOVE:
       //TODO
       printf("INPUT: %s\n", inputCommand);
       break;
     default:
-      printf("Wrong syntax\n");
+      printf("Wrong syntax or not implemented yet\n");
       break;
   }
-  printf("action: %d\n", action);
+
   free(inputCommand);
 
   return 0;
