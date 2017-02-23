@@ -10,6 +10,7 @@
 int main(int argc, char ** argv)
 {
   char * inputCommand = NULL;
+  vidAndSegmentId * params = NULL;
   int action = 0;
 
   inputCommand = typedCommand(argc, argv);
@@ -25,8 +26,16 @@ int main(int argc, char ** argv)
       listVAS();
       break;
     case REMOVE:
-      //TODO
-      printf("INPUT: %s\n", inputCommand);
+      params = getVidAndSegment(inputCommand, 'r');
+      if (params)
+      {
+        printf("vid: %d\n", params->vidId);
+        if (params->vidId >= 0)
+        {
+          removeVAS(params->vidId);
+        }
+      }
+      free(params);
       break;
     default:
       printf("Wrong syntax or not implemented yet\n");

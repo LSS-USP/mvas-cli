@@ -16,6 +16,6 @@ enum
 
 extern DIR * verifyVAS();
 extern int listVAS();
-extern int removeVAS(const char * pId);
+extern int removeVAS(int pVasId);
 
 #endif

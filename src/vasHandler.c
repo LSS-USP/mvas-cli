@@ -6,6 +6,7 @@
 #include <string.h>
 
 #include "vasHandler.h"
+#include "vas.h"
 
 DIR * verifyVAS()
 {
@@ -72,8 +73,21 @@ int listVAS()
   return 0;
 }
 
-int removeVAS(const char * pId)
+int removeVAS(int pVasId)
 {
-  //TODO
-  return 0;
+  if (!verifyVAS())
+  {
+    printf("There is no VAS\n");
+    return -1;
+  }
+
+  int status = 0;
+  status = vas_delete(pVasId);
+  if (status < 0)
+  {
+    printf("Error on VAS delete: %s\n", strerror(errno));
+    return status;
+  }
+
+  return status;
 }

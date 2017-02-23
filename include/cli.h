@@ -13,9 +13,19 @@ enum
   NOTHING
 };
 
+// TODO: It will be better, if typedCommand return a linked list of specific
+// struct related to commands.
+
+typedef struct _vidAndSegmentId
+{
+  int vidId;
+  int segId;
+}vidAndSegmentId;
+
 extern char * typedCommand(int pArgc, char ** pArgv);
 extern int syntaxCommand(const char * pCommand);
 extern char listOption(const char * pCommand);
 extern char removeOption(const char * pCommand);
+extern vidAndSegmentId * getVidAndSegment(const char * pOptions, const char pDelimiter);
 
 #endif

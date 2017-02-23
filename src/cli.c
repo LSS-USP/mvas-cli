@@ -167,3 +167,58 @@ char removeOption(const char * pCommand)
   }
   return NOTHING;
 }
+
+vidAndSegmentId * getVidAndSegment(const char * pOptions, const char pDelimiter)
+{
+  if (!pOptions)
+  {
+    printf("Invalid parameter\n");
+    return NULL;
+  }
+
+  char * handleOptions = strdup(pOptions);
+  int i = 0, extractVidSeg = 0;
+  char * stringToBreak = NULL;
+  char * nextToken = NULL;
+  vidAndSegmentId * params = NULL;
+
+  for (i = 0; i < strlen(handleOptions); i++)
+  {
+    if (handleOptions[i] == pDelimiter)
+    {
+      extractVidSeg = 1;
+      i++;
+      break;
+    }
+  }
+
+  if (extractVidSeg)
+  {
+    params = malloc(sizeof(vidAndSegmentId));
+    if (!params)
+    {
+      printf("Cannot allocate vidAndSegmentId\n");
+      return NULL;
+    }
+    params->vidId = -1;
+    params->segId = -1;
+
+    stringToBreak = strdup(&handleOptions[i]);
+    nextToken = strtok(stringToBreak, ":");
+    while(nextToken != NULL)
+    {
+      if (strstr(nextToken, "v") != NULL)
+      {
+        nextToken = strtok(NULL, " ");
+        params->vidId = atoi(nextToken);
+      }
+      if (strstr(nextToken, "s") != NULL)
+      {
+        nextToken = strtok(NULL, " ");
+        params->segId = atoi(nextToken);
+      }
+      nextToken = strtok(NULL, ":");
+    }
+  }
+  return params;
+}
