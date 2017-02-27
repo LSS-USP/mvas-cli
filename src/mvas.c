@@ -6,6 +6,7 @@
 
 #include "cli.h"
 #include "vasHandler.h"
+#include "segmentHandler.h"
 
 int main(int argc, char ** argv)
 {
@@ -33,6 +34,10 @@ int main(int argc, char ** argv)
         if (params->vidId >= 0)
         {
           removeVAS(params->vidId);
+        }
+        if (params->segId >= 0)
+        {
+          removeSegment(params->segId);
         }
       }
       free(params);

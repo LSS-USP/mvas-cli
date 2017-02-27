@@ -5,7 +5,7 @@
 
 #include "cli.h"
 
-#define COMMAND_OPTIONS "adrlhv:s:"
+#define COMMAND_OPTIONS "adrclhv:s:"
 
 static struct option longOptions[] =
 {
@@ -14,6 +14,7 @@ static struct option longOptions[] =
   {"attach", no_argument, 0, 0},
   {"detach", no_argument, 0, 0},
   {"remove", no_argument, 0, 0},
+  {"create", no_argument, 0, 0},
   {"list", no_argument, 0, 0},
   {"help", no_argument, 0, 0},
   {"verbose", no_argument, 0, 0},
