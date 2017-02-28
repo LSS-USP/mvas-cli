@@ -2,10 +2,13 @@
 #include <stdio.h>
 #include <getopt.h>
 #include <string.h>
+#include <sys/queue.h>
 
 #include "cli.h"
 
 #define COMMAND_OPTIONS "adrclhv:s:"
+
+static commandList listOfParameters;
 
 static struct option longOptions[] =
 {
@@ -23,69 +26,77 @@ static struct option longOptions[] =
   {0, 0, 0, 0}
 };
 
-char * typedCommand(int pArgc, char ** pArgv)
+static int insertParameter(const char * pParameter, const char * pValue)
+{
+  struct singleParameter * item = NULL;
+
+  if (!pParameter)
+    return -1;
+
+  item = (struct singleParameter *) malloc(sizeof(struct singleParameter));
+  if (!item)
+  {
+    printf("cannot allocated memory\n");
+    return -1;
+  }
+
+  item->parameter = strdup(pParameter);
+  if (pValue)
+    item->value = atoi(pValue); //TODO: change it to strol later
+  else
+    item->value = -1;
+
+  TAILQ_INSERT_TAIL(&listOfParameters.head, item, pointers);
+  return 0;
+}
+
+commandList * typedCommand(int pArgc, char ** pArgv)
 {
   int optionCharacter = 0;
   char breakParser = 1;
-  char * inputCommand = 0;
+  int optionIndex = 0;
 
-  inputCommand = malloc(BUFFER * sizeof(char));
-  if (!inputCommand)
-  {
-    return NULL;
-  }
+  TAILQ_INIT(&listOfParameters.head);
 
   while(breakParser)
   {
-    int optionIndex = 0;
-
-    optionCharacter = getopt_long(pArgc, pArgv, COMMAND_OPTIONS,
-                                  longOptions, &optionIndex);
+    optionIndex = 0;
+    optionCharacter = getopt_long_only(pArgc, pArgv, COMMAND_OPTIONS,
+                                       longOptions, &optionIndex);
     if (optionCharacter == -1)
     {
       break;
     }
 
-    strcat(inputCommand, " ");
     switch (optionCharacter)
     {
       case 0:
-        strcat(inputCommand, longOptions[optionIndex].name);
-        if (optarg)
-        {
-          strcat(inputCommand, ":");
-          strcat(inputCommand, optarg);
-        }
+        insertParameter(longOptions[optionIndex].name, optarg);
         break;
       case 'a':
-        strcat(inputCommand, "a");
+        insertParameter("a", NULL);
         break;
       case 'd':
-        strcat(inputCommand, "d");
+        insertParameter("d", NULL);
         break;
       case 'r':
-        strcat(inputCommand, "r");
+        insertParameter("r", NULL);
         break;
       case 'l':
-        strcat(inputCommand, "l");
+        insertParameter("l", NULL);
         break;
       case 'h':
-        strcat(inputCommand, "h");
+        insertParameter("h", NULL);
         break;
       case 'v':
-        strcat(inputCommand, "v");
-        strcat(inputCommand, ":");
-        strcat(inputCommand, optarg);
+        insertParameter("v", optarg);
         break;
       case 's':
-        strcat(inputCommand, "s");
-        strcat(inputCommand, ":");
-        strcat(inputCommand, optarg);
+        insertParameter("s", optarg);
         break;
       default:
         printf("Invalid option\n");
-        free(inputCommand);
-        inputCommand = NULL;
+        //TODO: FREE LIST
         breakParser = 0;
         break;
     };
@@ -99,127 +110,70 @@ char * typedCommand(int pArgc, char ** pArgv)
     printf("\n");
   }
 
-  return inputCommand;
+  return &listOfParameters;
 }
 
-int syntaxCommand(const char * pCommand)
+int syntaxCommand (const commandList * pParameters)
 {
   int rc = NOTHING;
-  if (!pCommand)
-  {
+  if (!pParameters)
     return ERROR;
-  }
 
-  rc = listOption(pCommand) == NOTHING ? rc : LIST;
-  rc = removeOption(pCommand) ==  NOTHING ? rc : REMOVE;
+  rc = listOption(pParameters);
+  if (rc != NOTHING)
+    return rc;
+
+  rc = removeOption(pParameters);
+  if (rc != NOTHING)
+    return rc;
 
   return rc;
 }
 
-char listOption(const char * pCommand)
+char listOption(const commandList * pParameters)
 {
+  struct singleParameter * first = NULL;
+
+  if (!pParameters)
+    return NOTHING;
+
+  first = pParameters->head.tqh_first;
+
   // Verify list command
-  if (strstr("list", pCommand))
-  {
+  if (strstr(first->parameter, "list") || !strcmp(first->parameter, "l"))
     return LIST;
-  }
-  else
+  else if (strstr(first->parameter, "ls"))
+    return LIST_SEG;
+  else if (strstr(first->parameter, "lv"))
+    return LIST_VAS;
+
+  return NOTHING;
+}
+
+char removeOption(const commandList * pParameters)
+{
+  struct singleParameter * first = NULL;
+
+  if (!pParameters)
+    return NOTHING;
+
+  first = pParameters->head.tqh_first;
+
+  if (!strcmp(first->parameter, "remove") || !strcmp(first->parameter, "r"))
   {
-    for (int i = 0; pCommand[i]; i++)
+    first = first->pointers.tqe_next;
+    // Next should be a segment id, vas id or both
+    for(; first != NULL; first = first->pointers.tqe_next)
     {
-      if (pCommand[i] == 'l' || pCommand[i] == ' ' || pCommand[i] == '\n')
+      if (!strcmp(first->parameter, "vid") ||
+          !strcmp(first->parameter, "v") ||
+          !strcmp(first->parameter, "segment") ||
+          !strcmp(first->parameter, "s"))
       {
         continue;
       }
       return NOTHING;
     }
   }
-  return LIST;
-}
-
-char removeOption(const char * pCommand)
-{
-  int i = 0;
-  int removeVasSeg = 0;
-  if (strstr("remove", pCommand))
-  {
-    return REMOVE;
-  }
-  else
-  {
-    for (i = 0; pCommand[i]; i++)
-    {
-      if (pCommand[i] == 'r' || pCommand[i] == ' ' || pCommand[i] == '\n')
-      {
-        removeVasSeg = 1;
-        break;
-      }
-    }
-    if (removeVasSeg)
-    {
-      for (; pCommand[i]; i++)
-      {
-        if (pCommand[i] == 'v' || pCommand[i] == 's')
-        {
-          return REMOVE;
-        }
-      }
-    }
-  }
-  return NOTHING;
-}
-
-vidAndSegmentId * getVidAndSegment(const char * pOptions, const char pDelimiter)
-{
-  if (!pOptions)
-  {
-    printf("Invalid parameter\n");
-    return NULL;
-  }
-
-  char * handleOptions = strdup(pOptions);
-  int i = 0, extractVidSeg = 0;
-  char * stringToBreak = NULL;
-  char * nextToken = NULL;
-  vidAndSegmentId * params = NULL;
-
-  for (i = 0; i < strlen(handleOptions); i++)
-  {
-    if (handleOptions[i] == pDelimiter)
-    {
-      extractVidSeg = 1;
-      i++;
-      break;
-    }
-  }
-
-  if (extractVidSeg)
-  {
-    params = malloc(sizeof(vidAndSegmentId));
-    if (!params)
-    {
-      printf("Cannot allocate vidAndSegmentId\n");
-      return NULL;
-    }
-    params->vidId = -1;
-    params->segId = -1;
-
-    stringToBreak = strdup(&handleOptions[i]);
-    nextToken = strtok(stringToBreak, ":");
-    while(nextToken != NULL)
-    {
-      if (strstr(nextToken, "v") != NULL)
-      {
-        nextToken = strtok(NULL, " ");
-        params->vidId = atoi(nextToken);
-      }
-      if (strstr(nextToken, "s") != NULL)
-      {
-        nextToken = strtok(NULL, " ");
-        params->segId = atoi(nextToken);
-      }
-      nextToken = strtok(NULL, ":");
-    }
-  }
-  return params;
+  return REMOVE;
 }

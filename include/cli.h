@@ -1,11 +1,15 @@
 #ifndef __MENU_H__
 #define __MENU_H__
 
+#include <sys/queue.h>
+
 #define BUFFER 4096
 
 enum
 {
   LIST,
+  LIST_VAS,
+  LIST_SEG,
   REMOVE,
   DETACH,
   ATTACH,
@@ -13,19 +17,21 @@ enum
   NOTHING
 };
 
-// TODO: It will be better, if typedCommand return a linked list of specific
-// struct related to commands.
-
-typedef struct _vidAndSegmentId
+struct singleParameter
 {
-  int vidId;
-  int segId;
-}vidAndSegmentId;
+  char * parameter;
+  int value;
+  TAILQ_ENTRY(singleParameter) pointers;
+};
 
-extern char * typedCommand(int pArgc, char ** pArgv);
-extern int syntaxCommand(const char * pCommand);
-extern char listOption(const char * pCommand);
-extern char removeOption(const char * pCommand);
-extern vidAndSegmentId * getVidAndSegment(const char * pOptions, const char pDelimiter);
+typedef struct _commandList
+{
+  TAILQ_HEAD(parameters, singleParameter) head;
+} commandList;
+
+extern commandList * typedCommand(int pArgc, char ** pArgv);
+extern int syntaxCommand(const commandList * pParameters);
+extern char listOption(const commandList * pCommand);
+extern char removeOption(const commandList * pCommand);
 
 #endif
