@@ -25,6 +25,13 @@ int main(int argc, char ** argv)
   {
     case LIST:
       listVAS();
+      listSegment();
+      break;
+    case LIST_VAS:
+      listVAS();
+      break;
+    case LIST_SEG:
+      listSegment();
       break;
     case REMOVE:
       params = getVidAndSegment(inputCommand, 'r');

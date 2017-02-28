@@ -6,6 +6,8 @@
 enum
 {
   LIST,
+  LIST_VAS,
+  LIST_SEG,
   REMOVE,
   DETACH,
   ATTACH,

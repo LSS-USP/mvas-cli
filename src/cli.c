@@ -23,13 +23,22 @@ static struct option longOptions[] =
   {0, 0, 0, 0}
 };
 
+static void concatenateParameter(char * pDest, const char * pSrc,
+                                 const char * pParam)
+{
+  strcat(pDest, pParam);
+  strcat(pDest, ":");
+  strcat(pDest, pSrc);
+}
+
 char * typedCommand(int pArgc, char ** pArgv)
 {
   int optionCharacter = 0;
   char breakParser = 1;
   char * inputCommand = 0;
+  int optionIndex = 0;
 
-  inputCommand = malloc(BUFFER * sizeof(char));
+  inputCommand = calloc(BUFFER, sizeof(char));
   if (!inputCommand)
   {
     return NULL;
@@ -37,10 +46,9 @@ char * typedCommand(int pArgc, char ** pArgv)
 
   while(breakParser)
   {
-    int optionIndex = 0;
-
-    optionCharacter = getopt_long(pArgc, pArgv, COMMAND_OPTIONS,
-                                  longOptions, &optionIndex);
+    optionIndex = 0;
+    optionCharacter = getopt_long_only(pArgc, pArgv, COMMAND_OPTIONS,
+                                       longOptions, &optionIndex);
     if (optionCharacter == -1)
     {
       break;
@@ -73,14 +81,10 @@ char * typedCommand(int pArgc, char ** pArgv)
         strcat(inputCommand, "h");
         break;
       case 'v':
-        strcat(inputCommand, "v");
-        strcat(inputCommand, ":");
-        strcat(inputCommand, optarg);
+        concatenateParameter(inputCommand, optarg, "v");
         break;
       case 's':
-        strcat(inputCommand, "s");
-        strcat(inputCommand, ":");
-        strcat(inputCommand, optarg);
+        concatenateParameter(inputCommand, optarg, "s");
         break;
       default:
         printf("Invalid option\n");
@@ -106,31 +110,36 @@ int syntaxCommand(const char * pCommand)
 {
   int rc = NOTHING;
   if (!pCommand)
-  {
     return ERROR;
-  }
 
-  rc = listOption(pCommand) == NOTHING ? rc : LIST;
-  rc = removeOption(pCommand) ==  NOTHING ? rc : REMOVE;
+  rc = listOption(pCommand);
+  if (rc != NOTHING)
+    return rc;
+
+  rc = removeOption(pCommand);
+  if (rc != NOTHING)
+    return rc;
 
   return rc;
 }
 
 char listOption(const char * pCommand)
 {
+  int i = 0;
+
   // Verify list command
-  if (strstr("list", pCommand))
-  {
+  if (strstr(pCommand, "list"))
     return LIST;
-  }
+  else if (strstr(pCommand, "ls"))
+    return LIST_SEG;
+  else if (strstr(pCommand, "lv"))
+    return LIST_VAS;
   else
   {
-    for (int i = 0; pCommand[i]; i++)
+    for (i = 0; pCommand[i]; i++)
     {
       if (pCommand[i] == 'l' || pCommand[i] == ' ' || pCommand[i] == '\n')
-      {
         continue;
-      }
       return NOTHING;
     }
   }

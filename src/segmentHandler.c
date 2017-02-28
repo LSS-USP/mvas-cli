@@ -23,3 +23,10 @@ int removeSegment(int pSegmentId)
 
   return status;
 }
+
+int listSegment()
+{
+  //TODO
+  printf("TODO\n");
+  return 0;
+}
