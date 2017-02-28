@@ -5,8 +5,6 @@
 
 #define PROC_VAS "/proc/vas/"
 
-#define MAX_PARAM_SIZE 256
-
 enum
 {
   PROC_VAS_EXIST,
@@ -14,7 +12,6 @@ enum
   PROC_CANNOT_BE_OPEN
 };
 
-extern DIR * verifyVAS();
 extern int listVAS();
 extern int removeVAS(int pVasId);
 

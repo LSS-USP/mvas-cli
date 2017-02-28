@@ -4,14 +4,15 @@
 
 #include "segmentHandler.h"
 #include "segment.h"
+#include "common.h"
 
 int removeSegment(int pSegmentId)
 {
- // if (!verifySegment())
- // {
- //   printf("There is no VAS\n");
- //   return -1;
- // }
+  if (!verifyProcStatus(PROC_SEGMENT))
+  {
+    printf("There is no Segment\n");
+    return -1;
+  }
 
   int status = 0;
   status = segment_delete(pSegmentId);
@@ -26,7 +27,6 @@ int removeSegment(int pSegmentId)
 
 int listSegment()
 {
-  //TODO
-  printf("TODO\n");
+  listFromProc(PROC_SEGMENT);
   return 0;
 }
