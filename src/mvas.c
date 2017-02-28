@@ -11,20 +11,22 @@
 int main(int argc, char ** argv)
 {
   char * inputCommand = NULL;
-  vidAndSegmentId * params = NULL;
   int action = 0;
+  struct singleParameter * elements = NULL;
 
-  inputCommand = typedCommand(argc, argv);
-  if (!inputCommand)
+  commandList * currentCommands = typedCommand(argc, argv);
+  if (!currentCommands)
   {
     return -1;
   }
 
-  action = syntaxCommand(inputCommand);
+  action = syntaxCommand(currentCommands);
   switch(action)
   {
     case LIST:
+      printf("=== VAS ===\n");
       listVAS();
+      printf("=== SEGMENTS ===\n");
       listSegment();
       break;
     case LIST_VAS:
@@ -34,20 +36,24 @@ int main(int argc, char ** argv)
       listSegment();
       break;
     case REMOVE:
-      params = getVidAndSegment(inputCommand, 'r');
-      if (params)
+      elements = currentCommands->head.tqh_first;
+      // Ignore first element (it is 'r' or 'remove')
+      elements = elements->pointers.tqe_next;
+      for(; elements != NULL; elements = elements->pointers.tqe_next)
       {
-        printf("vid: %d\n", params->vidId);
-        if (params->vidId >= 0)
+        if (!strcmp(elements->parameter, "vid") ||
+            !strcmp(elements->parameter, "v"))
         {
-          removeVAS(params->vidId);
+          removeVAS(elements->value);
+          continue;
         }
-        if (params->segId >= 0)
+        if (!strcmp(elements->parameter, "segment") ||
+            !strcmp(elements->parameter, "s"))
         {
-          removeSegment(params->segId);
+          removeSegment(elements->value);
+          continue;
         }
       }
-      free(params);
       break;
     default:
       printf("Wrong syntax or not implemented yet\n");
