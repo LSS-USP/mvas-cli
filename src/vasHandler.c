@@ -32,3 +32,15 @@ int removeVAS(int pVasId)
 
   return status;
 }
+
+int createVAS(const char * pName, mode_t pMode)
+{
+  int status = 0;
+  status = vas_create(pName, pMode);
+  if (status < 0)
+  {
+    printf("Error to create VAS: %s\n", strerror(errno));
+    return status;
+  }
+  return status;
+}

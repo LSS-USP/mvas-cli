@@ -24,9 +24,9 @@ int main(int argc, char ** argv)
   switch(action)
   {
     case LIST:
-      printf("=== VAS ===\n");
+      printf("VAS\n");
       listVAS();
-      printf("=== SEGMENTS ===\n");
+      printf("SEGMENTS\n");
       listSegment();
       break;
     case LIST_VAS:
@@ -44,16 +44,50 @@ int main(int argc, char ** argv)
         if (!strcmp(elements->parameter, "vid") ||
             !strcmp(elements->parameter, "v"))
         {
-          removeVAS(elements->value);
+          removeVAS(atoi(elements->value));
           continue;
         }
         if (!strcmp(elements->parameter, "segment") ||
             !strcmp(elements->parameter, "s"))
         {
-          removeSegment(elements->value);
+          removeSegment(atoi(elements->value));
           continue;
         }
       }
+      break;
+    case CREATE:
+      elements = currentCommands->head.tqh_first;
+      // Ignore first element (it is 'r' or 'remove')
+      elements = elements->pointers.tqe_next;
+      mode_t mode = 0;
+      char * name = NULL;
+      int size = 0;
+      for(; elements != NULL; elements = elements->pointers.tqe_next)
+      {
+        if (!strcmp(elements->parameter, "name"))
+        {
+          name = elements->value;
+          continue;
+        }
+        if (!strcmp(elements->parameter, "mode"))
+        {
+          mode = atoi(elements->value);
+          continue;
+        }
+        if (!strcmp(elements->parameter, "size"))
+        {
+          size = atoi(elements->value);
+          // TODO
+          printf("Size: %d\n", size);
+          continue;
+        }
+      }
+      if (name && mode != 0)
+      {
+        createVAS(name, mode);
+      }
+      //TODO: segment
+
       break;
     default:
       printf("Wrong syntax or not implemented yet\n");

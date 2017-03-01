@@ -6,7 +6,7 @@
 
 #include "cli.h"
 
-#define COMMAND_OPTIONS "adrclhv:s:"
+#define COMMAND_OPTIONS "adrc:lhv:s:"
 
 static commandList listOfParameters;
 
@@ -23,6 +23,8 @@ static struct option longOptions[] =
   {"verbose", no_argument, 0, 0},
   {"vid", required_argument, 0, 0},
   {"segment", required_argument, 0, 0},
+  {"name", required_argument, 0, 0},
+  {"mode", required_argument, 0, 0},
   {0, 0, 0, 0}
 };
 
@@ -42,9 +44,9 @@ static int insertParameter(const char * pParameter, const char * pValue)
 
   item->parameter = strdup(pParameter);
   if (pValue)
-    item->value = atoi(pValue); //TODO: change it to strol later
+    item->value = strdup(pValue);
   else
-    item->value = -1;
+    item->value = NULL;
 
   TAILQ_INSERT_TAIL(&listOfParameters.head, item, pointers);
   return 0;
@@ -81,6 +83,9 @@ commandList * typedCommand(int pArgc, char ** pArgv)
         break;
       case 'r':
         insertParameter("r", NULL);
+        break;
+      case 'c':
+        insertParameter("c", NULL);
         break;
       case 'l':
         insertParameter("l", NULL);
@@ -124,6 +129,10 @@ int syntaxCommand (const commandList * pParameters)
     return rc;
 
   rc = removeOption(pParameters);
+  if (rc != NOTHING)
+    return rc;
+
+  rc = createOption(pParameters);
   if (rc != NOTHING)
     return rc;
 
@@ -175,5 +184,51 @@ char removeOption(const commandList * pParameters)
       return NOTHING;
     }
   }
+  else
+  {
+    return NOTHING;
+  }
   return REMOVE;
+}
+
+char createOption(const commandList * pParameters)
+{
+  struct singleParameter * first = NULL;
+  unsigned char countMandatoryParameters = 0;
+
+  if (!pParameters)
+    return NOTHING;
+
+  first = pParameters->head.tqh_first;
+
+  if (!strcmp(first->parameter, "create") || !strcmp(first->parameter, "c"))
+  {
+    first = first->pointers.tqe_next;
+    // Next should be: name + mode (mode + name)
+    for(; first != NULL; first = first->pointers.tqe_next)
+    {
+      // Mandatory parameters
+      if (!strcmp(first->parameter, "name") ||
+          !strcmp(first->parameter, "mode"))
+      {
+        countMandatoryParameters++;
+        continue;
+      }
+      // Optional parameters
+      if (!strcmp(first->parameter, "size"))
+      {
+        continue;
+      }
+      return NOTHING;
+    }
+  }
+  else
+  {
+    return NOTHING;
+  }
+
+  if (countMandatoryParameters == 2)
+    return CREATE;
+  else
+    return NOTHING;
 }

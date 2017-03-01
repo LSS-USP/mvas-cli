@@ -11,6 +11,7 @@ enum
   LIST_VAS,
   LIST_SEG,
   REMOVE,
+  CREATE,
   DETACH,
   ATTACH,
   ERROR,
@@ -20,7 +21,7 @@ enum
 struct singleParameter
 {
   char * parameter;
-  int value;
+  char * value;
   TAILQ_ENTRY(singleParameter) pointers;
 };
 
@@ -33,5 +34,6 @@ extern commandList * typedCommand(int pArgc, char ** pArgv);
 extern int syntaxCommand(const commandList * pParameters);
 extern char listOption(const commandList * pCommand);
 extern char removeOption(const commandList * pCommand);
+extern char createOption(const commandList * pCommand);
 
 #endif
