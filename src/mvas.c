@@ -61,7 +61,9 @@ int main(int argc, char ** argv)
       elements = elements->pointers.tqe_next;
       mode_t mode = 0;
       char * name = NULL;
-      int size = 0;
+      unsigned long int size = 0;
+      unsigned long start = 0;
+
       for(; elements != NULL; elements = elements->pointers.tqe_next)
       {
         if (!strcmp(elements->parameter, "name"))
@@ -76,18 +78,24 @@ int main(int argc, char ** argv)
         }
         if (!strcmp(elements->parameter, "size"))
         {
-          size = atoi(elements->value);
-          // TODO
-          printf("Size: %d\n", size);
+          size = (unsigned long int)strtol(elements->value, NULL, 16);
+          continue;
+        }
+        if (!strcmp(elements->parameter, "start"))
+        {
+          start = (unsigned long int)strtol(elements->value, NULL, 16);
           continue;
         }
       }
-      if (name && mode != 0)
+
+      if (name && mode && start && size)
+      {
+        createSegment(name, start, size, mode);
+      }
+      else if (name && mode)
       {
         createVAS(name, mode);
       }
-      //TODO: segment
-
       break;
     default:
       printf("Wrong syntax or not implemented yet\n");

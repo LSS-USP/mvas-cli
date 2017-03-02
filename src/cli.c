@@ -18,12 +18,14 @@ static struct option longOptions[] =
   {"detach", no_argument, 0, 0},
   {"remove", no_argument, 0, 0},
   {"create", no_argument, 0, 0},
+  {"size", required_argument, 0, 0},
+  {"start", required_argument, 0, 0},
+  {"name", required_argument, 0, 0},
   {"list", no_argument, 0, 0},
   {"help", no_argument, 0, 0},
   {"verbose", no_argument, 0, 0},
   {"vid", required_argument, 0, 0},
   {"segment", required_argument, 0, 0},
-  {"name", required_argument, 0, 0},
   {"mode", required_argument, 0, 0},
   {0, 0, 0, 0}
 };
@@ -214,8 +216,9 @@ char createOption(const commandList * pParameters)
         countMandatoryParameters++;
         continue;
       }
-      // Optional parameters
-      if (!strcmp(first->parameter, "size"))
+      // Segment parameters
+      if (!strcmp(first->parameter, "size") ||
+          !strcmp(first->parameter, "start"))
       {
         continue;
       }
