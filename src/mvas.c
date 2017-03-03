@@ -66,12 +66,14 @@ int main(int argc, char ** argv)
 
       for(; elements != NULL; elements = elements->pointers.tqe_next)
       {
-        if (!strcmp(elements->parameter, "name"))
+        if (!strcmp(elements->parameter, "name") ||
+            !strcmp(elements->parameter, "n"))
         {
           name = elements->value;
           continue;
         }
-        if (!strcmp(elements->parameter, "mode"))
+        if (!strcmp(elements->parameter, "mode") ||
+            !strcmp(elements->parameter, "m"))
         {
           mode = atoi(elements->value);
           continue;

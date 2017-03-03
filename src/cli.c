@@ -6,7 +6,7 @@
 
 #include "cli.h"
 
-#define COMMAND_OPTIONS "adrc:lhv:s:"
+#define COMMAND_OPTIONS "adrclhv:s:n:m:"
 
 static commandList listOfParameters;
 
@@ -88,6 +88,12 @@ commandList * typedCommand(int pArgc, char ** pArgv)
         break;
       case 'c':
         insertParameter("c", NULL);
+        break;
+      case 'n':
+        insertParameter("n", optarg);
+        break;
+      case 'm':
+        insertParameter("m", optarg);
         break;
       case 'l':
         insertParameter("l", NULL);
@@ -210,8 +216,8 @@ char createOption(const commandList * pParameters)
     for(; first != NULL; first = first->pointers.tqe_next)
     {
       // Mandatory parameters
-      if (!strcmp(first->parameter, "name") ||
-          !strcmp(first->parameter, "mode"))
+      if (!strcmp(first->parameter, "name") || !strcmp(first->parameter, "n") ||
+          !strcmp(first->parameter, "mode") || !strcmp(first->parameter, "m"))
       {
         countMandatoryParameters++;
         continue;
