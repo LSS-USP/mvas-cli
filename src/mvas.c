@@ -24,9 +24,9 @@ int main(int argc, char ** argv)
   switch(action)
   {
     case LIST:
-      printf("VAS\n");
+      printf("=== VASes\n");
       listVAS();
-      printf("SEGMENTS\n");
+      printf("=== SEGMENTs\n");
       listSegment();
       break;
     case LIST_VAS:

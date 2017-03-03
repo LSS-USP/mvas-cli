@@ -64,6 +64,7 @@ int listFromProc(const char * pPath)
       printf("%s", fileLine);
     }
 
+    memset(target, 0, MAX_PARAM_SIZE * sizeof(char));
     fclose(vasStatusFile);
   }
 
