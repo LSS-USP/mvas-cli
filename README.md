@@ -81,3 +81,10 @@ mvas --create --name SEGMENT1 --mode 777 --start 0xC0DE000 --size 0x1000
 
 * start: Start address for segment
 * size: Size for segment
+
+----
+## Attach segment to VAS
+```
+mvas -a -v VAS_ID -s SEGMENT_ID
+mvas --attach-segment --vid VAS_ID --segment SEGMENT_ID --type [rw]
+```

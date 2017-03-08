@@ -13,7 +13,7 @@ enum
   REMOVE,
   CREATE,
   DETACH,
-  ATTACH,
+  ATTACH_SEGMENT,
   ERROR,
   NOTHING
 };
@@ -35,5 +35,6 @@ extern int syntaxCommand(const commandList * pParameters);
 extern char listOption(const commandList * pCommand);
 extern char removeOption(const commandList * pCommand);
 extern char createOption(const commandList * pCommand);
+extern char attachOption(const commandList * pCommand);
 
 #endif

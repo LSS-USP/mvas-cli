@@ -3,6 +3,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <getopt.h>
+#include <fcntl.h>
 
 #include "cli.h"
 #include "vasHandler.h"
@@ -98,6 +99,43 @@ int main(int argc, char ** argv)
       {
         createVAS(name, mode);
       }
+      break;
+    case ATTACH_SEGMENT:
+      elements = currentCommands->head.tqh_first;
+      elements = elements->pointers.tqe_next;
+      int status = 0;
+      int type = 0;
+      unsigned long int vasId = 0;
+      unsigned long segId = 0;
+
+      for(; elements != NULL; elements = elements->pointers.tqe_next)
+      {
+        if (!strcmp(elements->parameter, "vid") ||
+            !strcmp(elements->parameter, "v"))
+        {
+          vasId = (unsigned long int)strtol(elements->value, NULL, 0);
+          continue;
+        }
+        if (!strcmp(elements->parameter, "segment") ||
+            !strcmp(elements->parameter, "s"))
+        {
+          segId = (unsigned long int)strtol(elements->value, NULL, 0);
+          continue;
+        }
+        if (!strcmp(elements->parameter, "type") ||
+            !strcmp(elements->parameter, "t"))
+        {
+          if (!strcmp(elements->value, "wr") || !strcmp(elements->value, "rw"))
+            type = O_RDWR;
+          else if (!strcmp(elements->value, "w"))
+            type = O_WRONLY;
+          else
+            type = O_RDONLY;
+        }
+      }
+      status = attachSegmentToVas(vasId, segId, type);
+      if (status < 0)
+        return status;
       break;
     default:
       printf("Wrong syntax or not implemented yet\n");

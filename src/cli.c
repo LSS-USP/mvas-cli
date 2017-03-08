@@ -6,7 +6,7 @@
 
 #include "cli.h"
 
-#define COMMAND_OPTIONS "adrclhv:s:n:m:"
+#define COMMAND_OPTIONS "adrclhv:s:n:m:t:"
 
 static commandList listOfParameters;
 
@@ -14,7 +14,7 @@ static struct option longOptions[] =
 {
   {"lv", no_argument, 0, 0},
   {"ls", no_argument, 0, 0},
-  {"attach", no_argument, 0, 0},
+  {"attach-segment", no_argument, 0, 0},
   {"detach", no_argument, 0, 0},
   {"remove", no_argument, 0, 0},
   {"create", no_argument, 0, 0},
@@ -27,6 +27,7 @@ static struct option longOptions[] =
   {"vid", required_argument, 0, 0},
   {"segment", required_argument, 0, 0},
   {"mode", required_argument, 0, 0},
+  {"type", required_argument, 0, 0},
   {0, 0, 0, 0}
 };
 
@@ -107,6 +108,9 @@ commandList * typedCommand(int pArgc, char ** pArgv)
       case 's':
         insertParameter("s", optarg);
         break;
+      case 't':
+        insertParameter("t", optarg);
+        break;
       default:
         printf("Invalid option\n");
         //TODO: FREE LIST
@@ -141,6 +145,10 @@ int syntaxCommand (const commandList * pParameters)
     return rc;
 
   rc = createOption(pParameters);
+  if (rc != NOTHING)
+    return rc;
+
+  rc = attachOption(pParameters);
   if (rc != NOTHING)
     return rc;
 
@@ -238,6 +246,41 @@ char createOption(const commandList * pParameters)
 
   if (countMandatoryParameters == 2)
     return CREATE;
+  else
+    return NOTHING;
+}
+
+char attachOption(const commandList * pCommand)
+{
+  struct singleParameter * first = NULL;
+  char countMandatoryParameters = 0;
+
+  if (!pCommand)
+    return NOTHING;
+
+  first = pCommand->head.tqh_first;
+
+  if (!strcmp(first->parameter, "attach-segment") ||
+      !strcmp(first->parameter, "a"))
+  {
+    first = first->pointers.tqe_next;
+    for(; first != NULL; first = first->pointers.tqe_next)
+    {
+      if (!strcmp(first->parameter, "vid") ||
+          !strcmp(first->parameter, "v") ||
+          !strcmp(first->parameter, "segment") ||
+          !strcmp(first->parameter, "s") ||
+          !strcmp(first->parameter, "type") ||
+          !strcmp(first->parameter, "t"))
+      {
+        countMandatoryParameters++;
+        continue;
+      }
+      return NOTHING;
+    }
+  }
+  if (countMandatoryParameters == 3)
+    return ATTACH_SEGMENT;
   else
     return NOTHING;
 }

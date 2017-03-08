@@ -48,3 +48,18 @@ int createSegment (const char * const pName, unsigned long pStart,
   }
   return status;
 }
+
+int attachSegmentToVas(const int pVasId, const int pSegId, int pType)
+{
+  if (pVasId < 0 || pSegId < 0 || pType < 0)
+    return -1;
+
+  int status = 0;
+  status = segment_attach(pVasId, pSegId, pType);
+  if (status < 0)
+  {
+    printf("Error to attach segment to VAS: %s\n", strerror(errno));
+    return status;
+  }
+  return status;
+}
