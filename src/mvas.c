@@ -76,29 +76,38 @@ int main(int argc, char ** argv)
         if (!strcmp(elements->parameter, "mode") ||
             !strcmp(elements->parameter, "m"))
         {
-          mode = atoi(elements->value);
+          if (elements->value[0] != '0')
+            mode = (mode_t)strtol(elements->value, NULL, 8);
+          else
+            mode = (mode_t)strtol(elements->value, NULL, 0);
           continue;
         }
         if (!strcmp(elements->parameter, "size"))
         {
+          if (!strstr(elements->value, "0x"))
+          {
+            printf("Please, inform size in hexadecimal (0x)\n");
+            return -1;
+          }
           size = (unsigned long int)strtol(elements->value, NULL, 16);
           continue;
         }
         if (!strcmp(elements->parameter, "start"))
         {
+          if (!strstr(elements->value, "0x"))
+          {
+            printf("Please, inform start in hexadecimal (0x)\n");
+            return -1;
+          }
           start = (unsigned long int)strtol(elements->value, NULL, 16);
           continue;
         }
       }
 
       if (name && mode && start && size)
-      {
         createSegment(name, start, size, mode);
-      }
       else if (name && mode)
-      {
         createVAS(name, mode);
-      }
       break;
     case ATTACH_SEGMENT:
       elements = currentCommands->head.tqh_first;
