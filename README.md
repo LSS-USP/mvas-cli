@@ -8,6 +8,12 @@
 this tool, it is possible to do a lot of basic operations by command line. 
 
 ----
+# Dependencies
+
+* Kernel support to VAS
+* libmvas (lmvas)
+
+----
 # Commands
 
 > Here you can find a list of all available command lines.

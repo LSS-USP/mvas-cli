@@ -3,7 +3,7 @@
 
 #include <sys/types.h>
 
-#define PROC_VAS "/proc/vas/"
+#define SYS_VAS "/sys/kernel/vas/"
 
 enum
 {

@@ -4,19 +4,20 @@
 #include <errno.h>
 #include <string.h>
 
+#include <mvas/vas.h>
+
 #include "vasHandler.h"
-#include "vas.h"
 #include "common.h"
 
 int listVAS()
 {
-  listFromProc(PROC_VAS);
+  listFromProc(SYS_VAS);
   return 0;
 }
 
 int removeVAS(int pVasId)
 {
-  if (!verifyProcStatus(PROC_VAS))
+  if (!verifyProcStatus(SYS_VAS))
   {
     printf("There is no VAS\n");
     return -1;

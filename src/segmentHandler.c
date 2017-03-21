@@ -3,13 +3,15 @@
 #include <errno.h>
 
 #include <fcntl.h>
+
+#include <mvas/segment.h>
+
 #include "segmentHandler.h"
-#include "segment.h"
 #include "common.h"
 
-int removeSegment(int pSegmentId)
+int removeSegment (int pSegmentId)
 {
-  if (!verifyProcStatus(PROC_SEGMENT))
+  if (!verifyProcStatus(SYS_VAS_SEG))
   {
     printf("There is no Segment\n");
     return -1;
@@ -28,7 +30,7 @@ int removeSegment(int pSegmentId)
 
 int listSegment()
 {
-  listFromProc(PROC_SEGMENT);
+  listFromProc(SYS_VAS_SEG);
   return 0;
 }
 
@@ -37,7 +39,9 @@ int createSegment (const char * const pName, unsigned long pStart,
                    unsigned long pSize, mode_t pMode)
 {
   if (!pName || !pMode)
+  {
     return -1;
+  }
 
   int status = 0;
   status = segment_create_sz(pName, pStart, pSize, pMode);
@@ -52,7 +56,9 @@ int createSegment (const char * const pName, unsigned long pStart,
 int attachSegmentToVas(const int pVasId, const int pSegId, int pType)
 {
   if (pVasId < 0 || pSegId < 0 || pType < 0)
+  {
     return -1;
+  }
 
   int status = 0;
   status = segment_attach(pVasId, pSegId, pType);

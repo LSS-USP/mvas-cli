@@ -1,7 +1,8 @@
 #ifndef __SEGMENT_HANDLER_H__
 #define __SEGMENT_HANDLER_H__
 
-#define PROC_SEGMENT "/proc/segments/"
+#define SYS_VAS_SEG "/sys/kernel/vas_segs/"
+
 #include <linux/types.h>
 
 extern int listSegment ();

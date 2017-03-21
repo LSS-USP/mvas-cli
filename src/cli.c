@@ -36,7 +36,9 @@ static int insertParameter(const char * pParameter, const char * pValue)
   struct singleParameter * item = NULL;
 
   if (!pParameter)
+  {
     return -1;
+  }
 
   item = (struct singleParameter *) malloc(sizeof(struct singleParameter));
   if (!item)
@@ -47,9 +49,13 @@ static int insertParameter(const char * pParameter, const char * pValue)
 
   item->parameter = strdup(pParameter);
   if (pValue)
+  {
     item->value = strdup(pValue);
+  }
   else
+  {
     item->value = NULL;
+  }
 
   TAILQ_INSERT_TAIL(&listOfParameters.head, item, pointers);
   return 0;
@@ -123,7 +129,9 @@ commandList * typedCommand(int pArgc, char ** pArgv)
   {
     printf("non-option ARGV: ");
     while (optind < pArgc)
+    {
       printf("%s ", pArgv[optind++]);
+    }
     printf("\n");
   }
 
@@ -134,23 +142,33 @@ int syntaxCommand (const commandList * pParameters)
 {
   int rc = NOTHING;
   if (!pParameters)
+  {
     return ERROR;
+  }
 
   rc = listOption(pParameters);
   if (rc != NOTHING)
+  {
     return rc;
+  }
 
   rc = removeOption(pParameters);
   if (rc != NOTHING)
+  {
     return rc;
+  }
 
   rc = createOption(pParameters);
   if (rc != NOTHING)
+  {
     return rc;
+  }
 
   rc = attachOption(pParameters);
   if (rc != NOTHING)
+  {
     return rc;
+  }
 
   return rc;
 }
@@ -160,17 +178,25 @@ char listOption(const commandList * pParameters)
   struct singleParameter * first = NULL;
 
   if (!pParameters)
+  {
     return NOTHING;
+  }
 
   first = pParameters->head.tqh_first;
 
   // Verify list command
   if (strstr(first->parameter, "list") || !strcmp(first->parameter, "l"))
+  {
     return LIST;
+  }
   else if (strstr(first->parameter, "ls"))
+  {
     return LIST_SEG;
+  }
   else if (strstr(first->parameter, "lv"))
+  {
     return LIST_VAS;
+  }
 
   return NOTHING;
 }
@@ -180,7 +206,9 @@ char removeOption(const commandList * pParameters)
   struct singleParameter * first = NULL;
 
   if (!pParameters)
+  {
     return NOTHING;
+  }
 
   first = pParameters->head.tqh_first;
 
@@ -213,7 +241,9 @@ char createOption(const commandList * pParameters)
   unsigned char countMandatoryParameters = 0;
 
   if (!pParameters)
+  {
     return NOTHING;
+  }
 
   first = pParameters->head.tqh_first;
 
@@ -245,9 +275,13 @@ char createOption(const commandList * pParameters)
   }
 
   if (countMandatoryParameters == 2)
+  {
     return CREATE;
+  }
   else
+  {
     return NOTHING;
+  }
 }
 
 char attachOption(const commandList * pCommand)
@@ -256,7 +290,9 @@ char attachOption(const commandList * pCommand)
   char countMandatoryParameters = 0;
 
   if (!pCommand)
+  {
     return NOTHING;
+  }
 
   first = pCommand->head.tqh_first;
 
@@ -279,8 +315,13 @@ char attachOption(const commandList * pCommand)
       return NOTHING;
     }
   }
+
   if (countMandatoryParameters == 3)
+  {
     return ATTACH_SEGMENT;
+  }
   else
+  {
     return NOTHING;
+  }
 }

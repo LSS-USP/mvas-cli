@@ -16,7 +16,8 @@ INCLUDES := -I./$(INCDIR)/
 DEBUG :=
 
 # Required libs
-LIBMVAS := $(LIBDIR)/libmvas
+#LIBMVAS := $(LIBDIR)/libmvas
+LIBMVAS := -lmvas
 
 # Files to process
 SRCFILES := $(shell find -name '*.c' -printf '%P ')
@@ -28,7 +29,7 @@ $(TARGETS): $(OBJFILES:%=%.o)
 	$(CC) $(CCFLAGS) $^ $(LIBMVAS) -o $@ $(DEBUG) $(INCLUDES)
 
 $(OBJDIR)/%.o: $(basename $(subst $(OBJDIR),$(SRCDIR),$(OBJDIR)/%.o)).c
-	$(CC) -o $@ -c $< $(INCLUDES) $(CCFLAGS) $(DEBUG)
+	$(CC) -o $@ -c $< $(INCLUDES) $(CCFLAGS) $(DEBUG) $(LIBMVAS)
 
 .PHONY: clean, prepare
 

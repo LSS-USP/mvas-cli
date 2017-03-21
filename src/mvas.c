@@ -25,9 +25,9 @@ int main(int argc, char ** argv)
   switch(action)
   {
     case LIST:
-      printf("=== VASes\n");
+      printf("\tVASes\n");
       listVAS();
-      printf("=== SEGMENTs\n");
+      printf("\tSEGMENTs\n");
       listSegment();
       break;
     case LIST_VAS:
@@ -77,9 +77,13 @@ int main(int argc, char ** argv)
             !strcmp(elements->parameter, "m"))
         {
           if (elements->value[0] != '0')
+          {
             mode = (mode_t)strtol(elements->value, NULL, 8);
+          }
           else
+          {
             mode = (mode_t)strtol(elements->value, NULL, 0);
+          }
           continue;
         }
         if (!strcmp(elements->parameter, "size"))
@@ -105,9 +109,13 @@ int main(int argc, char ** argv)
       }
 
       if (name && mode && start && size)
+      {
         createSegment(name, start, size, mode);
+      }
       else if (name && mode)
+      {
         createVAS(name, mode);
+      }
       break;
     case ATTACH_SEGMENT:
       elements = currentCommands->head.tqh_first;
@@ -135,16 +143,24 @@ int main(int argc, char ** argv)
             !strcmp(elements->parameter, "t"))
         {
           if (!strcmp(elements->value, "wr") || !strcmp(elements->value, "rw"))
+          {
             type = O_RDWR;
+          }
           else if (!strcmp(elements->value, "w"))
+          {
             type = O_WRONLY;
+          }
           else
+          {
             type = O_RDONLY;
+          }
         }
       }
       status = attachSegmentToVas(vasId, segId, type);
       if (status < 0)
+      {
         return status;
+      }
       break;
     default:
       printf("Wrong syntax or not implemented yet\n");
