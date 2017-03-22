@@ -61,6 +61,7 @@ static void printEachElement(const char * pPath)
     memset(target, 0, MAX_PARAM_SIZE * sizeof(char));
     fclose(vasStatusFile);
   }
+  printf("\n");
   closedir(sysDir);
 }
 
@@ -88,7 +89,7 @@ DIR * verifyProcStatus(const char * pPath)
   }
 }
 
-int listFromProc(const char * pPath)
+int listFromSys(const char * pPath)
 {
   DIR * sysDir = verifyProcStatus(pPath);
   struct dirent * sysInfo = NULL;
@@ -113,6 +114,7 @@ int listFromProc(const char * pPath)
     strcat(target, sysInfo->d_name);
     strcat(target, "/");
 
+    printf("%s\n", target);
     printEachElement(target);
 
     memset(target, 0, MAX_PARAM_SIZE * sizeof(char));

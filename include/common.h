@@ -6,6 +6,6 @@
 
 extern int isFile(const char * pPath);
 extern DIR * verifyProcStatus(const char * pPath);
-extern int listFromProc(const char * pPath);
+extern int listFromSys(const char * pPath);
 
 #endif

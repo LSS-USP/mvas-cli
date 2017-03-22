@@ -11,7 +11,7 @@
 
 int listVAS()
 {
-  listFromProc(SYS_VAS);
+  listFromSys(SYS_VAS);
   return 0;
 }
 

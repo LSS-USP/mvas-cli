@@ -9,6 +9,12 @@
 #include "segmentHandler.h"
 #include "common.h"
 
+int listSegment()
+{
+  listFromSys(SYS_VAS_SEG);
+  return 0;
+}
+
 int removeSegment (int pSegmentId)
 {
   if (!verifyProcStatus(SYS_VAS_SEG))
@@ -27,13 +33,6 @@ int removeSegment (int pSegmentId)
 
   return status;
 }
-
-int listSegment()
-{
-  listFromProc(SYS_VAS_SEG);
-  return 0;
-}
-
 
 int createSegment (const char * const pName, unsigned long pStart,
                    unsigned long pSize, mode_t pMode)
