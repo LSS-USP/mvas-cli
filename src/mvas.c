@@ -55,6 +55,9 @@ int main(int argc, char ** argv)
         }
       }
       break;
+    case REMOVE_ALL_VASES:
+      removeAllVAS();
+      break;
     case CREATE:
       elements = currentCommands->head.tqh_first;
       // Ignore first element (it is 'r' or 'remove')

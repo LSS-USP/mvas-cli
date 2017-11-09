@@ -3,11 +3,13 @@
 #include <stdio.h>
 #include <errno.h>
 #include <string.h>
+#include <stdlib.h>
 
 #include <mvas/vas.h>
 
 #include "vasHandler.h"
 #include "common.h"
+#include "dataType.h"
 
 int listVAS()
 {
@@ -27,11 +29,40 @@ int removeVAS(int pVasId)
   status = vas_delete(pVasId);
   if (status < 0)
   {
-    printf("Error on VAS delete: %s\n", strerror(errno));
+    printf("Cannot delete VAS (%d): %s\n", pVasId, strerror(errno));
     return status;
   }
 
   return status;
+}
+
+int removeAllVAS()
+{
+  DIR * sysDir = verifyProcStatus(SYS_VAS);
+  struct dirent * sysInfo = NULL;
+  int idVas = 0;
+
+  if (!sysDir)
+  {
+    printf("Cannot open %s\n", SYS_VAS);
+    return -1;
+  }
+
+  // Iterate inside folder
+  while((sysInfo = readdir(sysDir)))
+  {
+    if (!strcmp(sysInfo->d_name, "..") || !strcmp(sysInfo->d_name, "."))
+    {
+      continue;
+    }
+
+    idVas = atoi(sysInfo->d_name);
+    printf("Remove VAS: %d\n", sysInfo->d_name, idVas);
+    removeVAS(idVas);
+  }
+
+  closedir(sysDir);
+  return 1;
 }
 
 int createVAS(const char * pName, mode_t pMode)

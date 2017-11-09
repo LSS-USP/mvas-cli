@@ -17,6 +17,7 @@ static struct option longOptions[] =
   {"attach-segment", no_argument, 0, 0},
   {"detach", no_argument, 0, 0},
   {"remove", no_argument, 0, 0},
+  {"remove-all-vas", no_argument, 0, 0},
   {"create", no_argument, 0, 0},
   {"size", required_argument, 0, 0},
   {"start", required_argument, 0, 0},
@@ -158,6 +159,12 @@ int syntaxCommand (const commandList * pParameters)
     return rc;
   }
 
+  rc = removeAllVASesOption(pParameters);
+  if (rc != NOTHING)
+  {
+    return rc;
+  }
+
   rc = createOption(pParameters);
   if (rc != NOTHING)
   {
@@ -233,6 +240,27 @@ char removeOption(const commandList * pParameters)
     return NOTHING;
   }
   return REMOVE;
+}
+
+char removeAllVASesOption(const commandList * pCommand)
+{
+  struct singleParameter * first = NULL;
+
+  if (!pCommand)
+  {
+    return NOTHING;
+  }
+
+  first = pCommand->head.tqh_first;
+
+  if (!strcmp(first->parameter, "remove-all-vas"))
+  {
+    return REMOVE_ALL_VASES;
+  }
+  else
+  {
+    return NOTHING;
+  }
 }
 
 char createOption(const commandList * pParameters)

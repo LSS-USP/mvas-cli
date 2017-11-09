@@ -14,6 +14,7 @@ enum
 
 extern int listVAS();
 extern int removeVAS(int pVasId);
+extern int removeAllVAS();
 extern int createVAS(const char * pName, mode_t pMode);
 
 #endif

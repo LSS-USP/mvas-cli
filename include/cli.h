@@ -11,6 +11,7 @@ enum
   LIST_VAS,
   LIST_SEG,
   REMOVE,
+  REMOVE_ALL_VASES,
   CREATE,
   DETACH,
   ATTACH_SEGMENT,
@@ -34,6 +35,7 @@ extern commandList * typedCommand(int pArgc, char ** pArgv);
 extern int syntaxCommand(const commandList * pParameters);
 extern char listOption(const commandList * pCommand);
 extern char removeOption(const commandList * pCommand);
+extern char removeAllVASesOption(const commandList * pCommand);
 extern char createOption(const commandList * pCommand);
 extern char attachOption(const commandList * pCommand);
 
