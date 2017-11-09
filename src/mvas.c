@@ -7,7 +7,6 @@
 
 #include "cli.h"
 #include "vasHandler.h"
-#include "segmentHandler.h"
 
 int main(int argc, char ** argv)
 {
@@ -27,13 +26,12 @@ int main(int argc, char ** argv)
     case LIST:
       listVAS();
       printf("\n");
-      listSegment();
       break;
     case LIST_VAS:
       listVAS();
       break;
     case LIST_SEG:
-      listSegment();
+      //listSegment();
       break;
     case REMOVE:
       elements = currentCommands->head.tqh_first;
@@ -50,7 +48,6 @@ int main(int argc, char ** argv)
         if (!strcmp(elements->parameter, "segment") ||
             !strcmp(elements->parameter, "s"))
         {
-          removeSegment(atoi(elements->value));
           continue;
         }
       }
@@ -112,7 +109,7 @@ int main(int argc, char ** argv)
 
       if (name && mode && start && size)
       {
-        createSegment(name, start, size, mode);
+        //createSegment(name, start, size, mode);
       }
       else if (name && mode)
       {
@@ -158,7 +155,7 @@ int main(int argc, char ** argv)
           }
         }
       }
-      status = attachSegmentToVas(vasId, segId, type);
+      //status = attachSegmentToVas(vasId, segId, type);
       if (status < 0)
       {
         return status;
