@@ -13,8 +13,6 @@ enum
   REMOVE,
   REMOVE_ALL_VASES,
   CREATE,
-  DETACH,
-  ATTACH_SEGMENT,
   ERROR,
   NOTHING
 };
@@ -37,6 +35,5 @@ extern char listOption(const commandList * pCommand);
 extern char removeOption(const commandList * pCommand);
 extern char removeAllVASesOption(const commandList * pCommand);
 extern char createOption(const commandList * pCommand);
-extern char attachOption(const commandList * pCommand);
 
 #endif

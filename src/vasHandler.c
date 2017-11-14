@@ -42,22 +42,18 @@ int removeAllVAS()
   struct dirent * sysInfo = NULL;
   int idVas = 0;
 
-  if (!sysDir)
-  {
+  if (!sysDir) {
     printf("Cannot open %s\n", SYS_VAS);
     return -1;
   }
 
   // Iterate inside folder
-  while((sysInfo = readdir(sysDir)))
-  {
+  while((sysInfo = readdir(sysDir))) {
     if (!strcmp(sysInfo->d_name, "..") || !strcmp(sysInfo->d_name, "."))
-    {
       continue;
-    }
 
     idVas = atoi(sysInfo->d_name);
-    printf("Remove VAS: %d\n", sysInfo->d_name, idVas);
+    printf("Remove VAS: %s %d\n", sysInfo->d_name, idVas);
     removeVAS(idVas);
   }
 
@@ -69,9 +65,8 @@ int createVAS(const char * pName, mode_t pMode)
 {
   int status = 0;
   status = vas_create(pName, pMode);
-  if (status < 0)
-  {
-    printf("Error to create VAS: %s\n", strerror(errno));
+  if (status < 0) {
+    printf("Error to create VAS, %s, %o: %s\n", pName, pMode, strerror(errno));
     return status;
   }
   return status;

@@ -14,7 +14,6 @@ static struct option longOptions[] =
 {
   {"lv", no_argument, 0, 0},
   {"ls", no_argument, 0, 0},
-  {"attach-segment", no_argument, 0, 0},
   {"detach", no_argument, 0, 0},
   {"remove", no_argument, 0, 0},
   {"remove-all-vas", no_argument, 0, 0},
@@ -26,7 +25,6 @@ static struct option longOptions[] =
   {"help", no_argument, 0, 0},
   {"verbose", no_argument, 0, 0},
   {"vid", required_argument, 0, 0},
-  {"segment", required_argument, 0, 0},
   {"mode", required_argument, 0, 0},
   {"type", required_argument, 0, 0},
   {0, 0, 0, 0}
@@ -171,12 +169,6 @@ int syntaxCommand (const commandList * pParameters)
     return rc;
   }
 
-  rc = attachOption(pParameters);
-  if (rc != NOTHING)
-  {
-    return rc;
-  }
-
   return rc;
 }
 
@@ -222,16 +214,13 @@ char removeOption(const commandList * pParameters)
   if (!strcmp(first->parameter, "remove") || !strcmp(first->parameter, "r"))
   {
     first = first->pointers.tqe_next;
-    // Next should be a segment id, vas id or both
+    // Next should be a vas id or both
     for(; first != NULL; first = first->pointers.tqe_next)
     {
       if (!strcmp(first->parameter, "vid") ||
-          !strcmp(first->parameter, "v") ||
-          !strcmp(first->parameter, "segment") ||
-          !strcmp(first->parameter, "s"))
-      {
+          !strcmp(first->parameter, "v"))
         continue;
-      }
+
       return NOTHING;
     }
   }
@@ -305,48 +294,6 @@ char createOption(const commandList * pParameters)
   if (countMandatoryParameters == 2)
   {
     return CREATE;
-  }
-  else
-  {
-    return NOTHING;
-  }
-}
-
-char attachOption(const commandList * pCommand)
-{
-  struct singleParameter * first = NULL;
-  char countMandatoryParameters = 0;
-
-  if (!pCommand)
-  {
-    return NOTHING;
-  }
-
-  first = pCommand->head.tqh_first;
-
-  if (!strcmp(first->parameter, "attach-segment") ||
-      !strcmp(first->parameter, "a"))
-  {
-    first = first->pointers.tqe_next;
-    for(; first != NULL; first = first->pointers.tqe_next)
-    {
-      if (!strcmp(first->parameter, "vid") ||
-          !strcmp(first->parameter, "v") ||
-          !strcmp(first->parameter, "segment") ||
-          !strcmp(first->parameter, "s") ||
-          !strcmp(first->parameter, "type") ||
-          !strcmp(first->parameter, "t"))
-      {
-        countMandatoryParameters++;
-        continue;
-      }
-      return NOTHING;
-    }
-  }
-
-  if (countMandatoryParameters == 3)
-  {
-    return ATTACH_SEGMENT;
   }
   else
   {
